@@ -1,1 +1,2 @@
 # LifeHack
+LifeHack generator
