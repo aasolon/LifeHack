@@ -435,7 +435,8 @@
 
     // 5. Рисуем получившуются пикчу в тэге <img>
     var img = document.getElementById("img");
-    img.src = canvas.toDataURL();
+    var jpegQuality = (8 - scaleFactor) / 7;
+    img.src = canvas.toDataURL('image/jpeg', jpegQuality);
   }
 
   function initCanvas() {
