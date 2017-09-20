@@ -10,14 +10,30 @@
               oninput="addText()"
 
     >При обсуждении рабочих вопросов концентрируйтесь на СПОСОБАХ ИХ РЕШЕНИЯ, пресекая неэффективное общение</textarea>
-  <div>
-    <label for="cb1">Улучшить лого</label>
-    <input id="cb1" type="checkbox" onchange="addText()">
-  </div>
-  <p>Шакализатор
-    <input id="shakalizator" type="range" min="1" max="7" step="0.1" value="1" onchange="addText()" style="width: 500px">
-  </p>
-  <img id="shakalizator_img" style="width: 20%; height: 20%;"/>
+  <img id="shakalizator_img" style="width: 20%; height: 20%; padding: auto;"/>
+  <table>
+    <tr>
+      <td style="text-align: right">Улучшить лого:</td>
+      <td><input id="cb1" type="checkbox" onchange="addText()"></td>
+    </tr>
+    <tr>
+      <td style="text-align: right">Шакализатор:</td>
+      <td>
+        <input id="shakalizator" type="range" min="1" max="7" step="0.1" value="1" onchange="addText()" style="width: 500px">
+      </td>
+      <td><input id="shakalizatorText" type="number" style="background-color: lightgray;" readonly/></td>
+    </tr>
+    <tr>
+      <td style="text-align: right">Качество JPEG:</td>
+      <td><input id="jpegQuality" type="range" min="0.0001" max="1" step="0.01" value="1" onchange="addText()" style="width: 500px"></td>
+      <td><input id="jpegQualityText" type="number" style="background-color: lightgray;" readonly/></td>
+    </tr>
+    <tr>
+      <td style="text-align: right">Количество проходов JPEG-сжатия:</td>
+      <td><input id="jpegSavesNumber" type="range" min="1" max="50" value="1" step="1" onchange="addText()" style="width: 500px"/></td>
+      <td><input id="jpegSavesNumberText" type="number" style="background-color: lightgray;" readonly/></td>
+    </tr>
+  </table>
   <br/>
   <br/>
 </div>
@@ -420,6 +436,7 @@
 
     // 3. Уменьшем масштаб бэкапа канваса и рисуем в нём пикчу из оригинального канваса (получится маленькая пикча из сжатой большой)
     var scaleFactor = +document.getElementById("shakalizator").value;
+    document.getElementById("shakalizatorText").value = scaleFactor;
     backupContext.scale(1/scaleFactor, 1/scaleFactor);
     backupContext.drawImage(canvas, 0, 0);
 
@@ -435,8 +452,18 @@
 
     // 5. Рисуем получившуются пикчу в тэге <img>
     var img = document.getElementById("img");
-    var jpegQuality = (8 - scaleFactor) / 7;
-    img.src = canvas.toDataURL('image/jpeg', jpegQuality);
+    var jpegQuality = document.getElementById("jpegQuality").value;
+    document.getElementById("jpegQualityText").value = jpegQuality;
+    var jpegSavesNumber = document.getElementById("jpegSavesNumber").value;
+    document.getElementById("jpegSavesNumberText").value = jpegSavesNumber;
+    img.onload = function () {
+      context.drawImage(img, 0, 0);
+      jpegSavesNumber--;
+      if (jpegSavesNumber > 0) {
+        img.src = canvas.toDataURL('image/jpeg', +jpegQuality);
+      }
+    };
+    img.src = canvas.toDataURL('image/jpeg', +jpegQuality);
   }
 
   function initCanvas() {
